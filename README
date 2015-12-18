@@ -1,0 +1,15 @@
+General Information
+===================
+
+This is an lazytree which is based on GTK+ treeview for lazy
+data retrieval. This is useful for large number of columns and
+rows.
+
+Install
+=======
+
+aclocal
+autoconf
+automake --add-missing
+./configure
+make
