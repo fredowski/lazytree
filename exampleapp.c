@@ -3,6 +3,7 @@
 #include <glib/gprintf.h>
 
 #include "exampleapp.h"
+#include "lazytreeview.h"
 
 
 struct _ExampleApp
@@ -16,8 +17,8 @@ struct _ExampleAppClass
 };
 
 G_DEFINE_TYPE(ExampleApp, example_app, GTK_TYPE_APPLICATION);
-const int nr_of_columns = 20;
-const int nr_of_rows = 300;
+const int nr_of_columns = 20000;
+const int nr_of_rows = 15;
 
 static GtkTreeModel *
 create_model (void)
@@ -60,13 +61,14 @@ add_columns(GtkTreeView *treeview)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  for (int c = 0;c < nr_of_columns;c++){
+  for (int c = 0;c < 3;c++){
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (renderer,
                   "editable", TRUE,
                   NULL);
     column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title (column, "Fred");
+    gtk_tree_view_column_set_resizable (column, TRUE);
     gtk_tree_view_column_pack_start (column, renderer, FALSE);
     gtk_tree_view_column_add_attribute (column,
                                         renderer,
@@ -90,6 +92,7 @@ example_app_activate (GApplication *app)
   GtkWidget *sw;
   GtkWidget *treeview;
   GtkTreeModel *model;
+  GtkAdjustment *adj;
 
   printf("%s\n",__FUNCTION__);
   
@@ -98,16 +101,18 @@ example_app_activate (GApplication *app)
 
   model = create_model();
 
-
-  treeview = gtk_tree_view_new_with_model (model);
+  treeview = lazy_tree_view_new();
+  gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), model);
   add_columns (GTK_TREE_VIEW (treeview));
   sw = gtk_scrolled_window_new(NULL,NULL);
-  gtk_container_add (GTK_CONTAINER (sw), treeview);
-  
-  label = gtk_label_new ("Hallo!!!!");
+  gtk_container_add (GTK_CONTAINER (sw), treeview);  
   gtk_container_add (GTK_CONTAINER (window), sw);
-  gtk_widget_show_all (sw);
+  gtk_widget_show_all (window);
   gtk_window_present (GTK_WINDOW (window));
+  adj = gtk_scrollable_get_hadjustment( GTK_SCROLLABLE (treeview));
+  gtk_adjustment_set_upper(adj, 200.0);
+  gtk_adjustment_set_value(adj, 80.0);
+  gtk_scrollable_set_hadjustment ( GTK_SCROLLABLE (treeview), adj);
 }
 
 static void
