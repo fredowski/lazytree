@@ -62,7 +62,7 @@ add_columns(GtkTreeView *treeview)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  for (int c = 0;c < 9;c++){
+  for (int c = 0;c < 3;c++){
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (renderer,
                   "editable", TRUE,
