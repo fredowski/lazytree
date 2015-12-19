@@ -1,12 +1,31 @@
-General Information
-===================
+# General Information
 
-This is an lazytree which is based on GTK+ treeview for lazy
-data retrieval. This is useful for large number of columns and
-rows.
+This is lazytree which is based on GTK+ GtkTreeView for lazy
+data retrieval. This is useful for a large number of columns and
+rows. It provides an example lazystore which provides the
+GtkTreeModel Interface without actually storing data.
 
-Install
-=======
+lazytreeview is derived from GtkTreeView and renders the data
+in a lazy manner. Unlike GtkTreeView LazyTreeView only retrieves
+a subset of the data from the model. This comes with restrictions.
+
+* All columns have the cellrenderer with type G_TYPE_STRING
+* All data in the model is provided as string
+
+Friedrich Beckmann
+
+# License
+
+lazytree is licensed under GPL3. See COPYING file.
+
+# Install
+
+## Requirements
+
+* Gtk+ version 3.4.0 and higher
+* autotools
+
+## Howto install
 
 aclocal
 autoconf
