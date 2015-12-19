@@ -2,6 +2,7 @@
 bin_PROGRAMS = demo
 demo_SOURCES = main.c \
                exampleapp.c \
-               lazytreeview.c
+               lazytreeview.c \
+               lazystore.c
 demo_CFLAGS = $(TREEVIEW_CFLAGS)
 demo_LDADD = $(TREEVIEW_LIBS)

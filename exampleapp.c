@@ -4,6 +4,7 @@
 
 #include "exampleapp.h"
 #include "lazytreeview.h"
+#include "lazystore.h"
 
 
 struct _ExampleApp
@@ -61,7 +62,7 @@ add_columns(GtkTreeView *treeview)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  for (int c = 0;c < 3;c++){
+  for (int c = 0;c < 9;c++){
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (renderer,
                   "editable", TRUE,
@@ -95,24 +96,26 @@ example_app_activate (GApplication *app)
   GtkAdjustment *adj;
 
   printf("%s\n",__FUNCTION__);
-  
+
   window = gtk_application_window_new (GTK_APPLICATION (app));
   gtk_window_set_default_size ( GTK_WINDOW (window), 800, 480);
 
+  /* Choose beetween the gkt list store via create_model
+     or the lazystore*/
+#if 0
   model = create_model();
+#else
+  model = GTK_TREE_MODEL (lazy_store_new());
+#endif
 
   treeview = lazy_tree_view_new();
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), model);
   add_columns (GTK_TREE_VIEW (treeview));
   sw = gtk_scrolled_window_new(NULL,NULL);
-  gtk_container_add (GTK_CONTAINER (sw), treeview);  
+  gtk_container_add (GTK_CONTAINER (sw), treeview);
   gtk_container_add (GTK_CONTAINER (window), sw);
   gtk_widget_show_all (window);
   gtk_window_present (GTK_WINDOW (window));
-  adj = gtk_scrollable_get_hadjustment( GTK_SCROLLABLE (treeview));
-  gtk_adjustment_set_upper(adj, 200.0);
-  gtk_adjustment_set_value(adj, 80.0);
-  gtk_scrollable_set_hadjustment ( GTK_SCROLLABLE (treeview), adj);
 }
 
 static void

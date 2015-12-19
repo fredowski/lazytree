@@ -18,19 +18,14 @@
 #define __LAZY_TREE_VIEW_H
 
 #include <gtk/gtk.h>
-#include "lazytreeview.h"
-
 
 #define TYPE_LAZY_TREE_VIEW (lazy_tree_view_get_type ())
 #define LAZY_TREE_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_LAZY_TREE_VIEW, LazyTreeView))
 
-
 typedef struct _LazyTreeView         LazyTreeView;
 typedef struct _LazyTreeViewClass    LazyTreeViewClass;
 
-
 GType                   lazy_tree_view_get_type     (void);
 GtkWidget              *lazy_tree_view_new          (void);
-
 
 #endif /* __LAZY_TREE_VIEW_H */

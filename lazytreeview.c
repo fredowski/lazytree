@@ -40,7 +40,6 @@ struct _LazyTreeView
    * driving the scrollable adjustment values */
   guint hscroll_policy : 1;
   guint vscroll_policy : 1;
-  
 };
 
 struct _LazyTreeViewClass
@@ -62,7 +61,6 @@ print_adj(const char *name, GtkAdjustment *adj)
            gtk_adjustment_get_value (adj),
            gtk_adjustment_get_lower (adj),
            gtk_adjustment_get_upper (adj));
-  
 }
 /* Callbacks */
 static void
@@ -76,11 +74,8 @@ lazy_tree_view_hadjustment_changed (GtkAdjustment *adjustment,
   ncol_in_tree_view = gtk_tree_view_get_n_columns (GTK_TREE_VIEW (tree_view));
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
   ncol_in_model = gtk_tree_model_get_n_columns (model);
-  if (gtk_adjustment_get_upper (adjustment) > 0.0)
-    col_offset = (ncol_in_model - ncol_in_tree_view) *
-      (gtk_adjustment_get_value (adjustment) / gtk_adjustment_get_upper (adjustment));
-    
-  
+  col_offset = gtk_adjustment_get_value (adjustment);
+
   for(int ctree = 0;ctree < ncol_in_tree_view;ctree++)
     {
       GtkTreeViewColumn *column;
@@ -92,12 +87,10 @@ lazy_tree_view_hadjustment_changed (GtkAdjustment *adjustment,
       gtk_tree_view_column_set_attributes (column, renderer,
                                            "text", ctree + col_offset, NULL);
       gtk_tree_view_column_queue_resize (column);
-      
     }
-  
+
   print_adj (__FUNCTION__, adjustment);
 
-  
 }
 
 static void
@@ -252,21 +245,67 @@ lazy_tree_view_init (LazyTreeView *treeview)
 }
 
 static void
+print_allocation (const char *msg, GtkAllocation *allocation)
+{
+  if (allocation)
+    printf("%s - x: %d, y: %d, width: %d, height: %d\n",
+           msg,
+           allocation->x,
+           allocation->y,
+           allocation->width,
+           allocation->height);
+  else
+    printf("%s - allocation is NULL\n",msg);
+}
+
+static void
+lazy_tree_view_size_allocate (GtkWidget     *widget,
+                              GtkAllocation *allocation)
+{
+  LazyTreeView *tree_view = LAZY_TREE_VIEW (widget);
+  GtkTreeModel *model;
+  GtkAdjustment *adj;
+  guint ncol_in_tree_view, ncol_in_model, col_offset = 0;
+  print_allocation(__FUNCTION__, allocation);
+
+  /* Adapt the horizontal adjustments to the number of columns in
+     the treeview and in the model */
+  ncol_in_tree_view = gtk_tree_view_get_n_columns (GTK_TREE_VIEW (tree_view));
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
+  ncol_in_model = gtk_tree_model_get_n_columns (model);
+  adj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (widget));
+  gtk_adjustment_set_upper(adj, ncol_in_model);
+  gtk_adjustment_set_page_size(adj, ncol_in_tree_view);
+  gtk_adjustment_set_page_increment(adj, ncol_in_tree_view);
+  gtk_adjustment_set_step_increment(adj, 1.0);
+  gtk_scrollable_set_hadjustment ( GTK_SCROLLABLE (widget), adj);
+  /* Chain up */
+  GTK_WIDGET_CLASS(lazy_tree_view_parent_class)->size_allocate(widget, allocation);
+  print_allocation(__FUNCTION__, allocation);
+}
+
+static void
 lazy_tree_view_class_init (LazyTreeViewClass *class)
 {
   GObjectClass *o_class;
+  GtkWidgetClass *widget_class;
 
   o_class = (GObjectClass *) class;
+  widget_class = (GtkWidgetClass*) class;
 
   /* GObject signals */
   o_class->set_property = lazy_tree_view_set_property;
   o_class->get_property = lazy_tree_view_get_property;
+
+  /* widget */
+  widget_class->size_allocate = lazy_tree_view_size_allocate;
+
   /* Properties */
   g_object_class_override_property (o_class, PROP_HADJUSTMENT,    "hadjustment");
-  g_object_class_override_property (o_class, PROP_VADJUSTMENT,    "vadjustment");
+  //g_object_class_override_property (o_class, PROP_VADJUSTMENT,    "vadjustment");
   g_object_class_override_property (o_class, PROP_HSCROLL_POLICY, "hscroll-policy");
-  g_object_class_override_property (o_class, PROP_VSCROLL_POLICY, "vscroll-policy");
-  
+  //g_object_class_override_property (o_class, PROP_VSCROLL_POLICY, "vscroll-policy");
+
   printf("%s\n",__FUNCTION__);
 }
 
