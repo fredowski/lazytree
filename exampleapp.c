@@ -62,13 +62,14 @@ add_columns(GtkTreeView *treeview)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  for (int c = 0;c < 3;c++){
+  for (int c = 0;c < 5;c++){
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (renderer,
                   "editable", TRUE,
                   NULL);
     column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title (column, "Fred");
+    gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
     gtk_tree_view_column_set_resizable (column, TRUE);
     gtk_tree_view_column_pack_start (column, renderer, FALSE);
     gtk_tree_view_column_add_attribute (column,
@@ -94,6 +95,7 @@ example_app_activate (GApplication *app)
   GtkWidget *treeview;
   GtkTreeModel *model;
   GtkAdjustment *adj;
+  GtkTreeSelection *selection;
 
   printf("%s\n",__FUNCTION__);
 
@@ -109,7 +111,11 @@ example_app_activate (GApplication *app)
 #endif
 
   treeview = lazy_tree_view_new();
+  gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (treeview), TRUE);
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+  gtk_tree_selection_set_mode ( selection, GTK_SELECTION_MULTIPLE);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), model);
+  gtk_tree_view_set_rubber_banding ( GTK_TREE_VIEW (treeview), TRUE);
   add_columns (GTK_TREE_VIEW (treeview));
   sw = gtk_scrolled_window_new(NULL,NULL);
   gtk_container_add (GTK_CONTAINER (sw), treeview);
