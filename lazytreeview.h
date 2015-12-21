@@ -19,8 +19,12 @@
 
 #include <gtk/gtk.h>
 
-#define TYPE_LAZY_TREE_VIEW (lazy_tree_view_get_type ())
-#define LAZY_TREE_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_LAZY_TREE_VIEW, LazyTreeView))
+#define TYPE_LAZY_TREE_VIEW            (lazy_tree_view_get_type ())
+#define LAZY_TREE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_LAZY_TREE_VIEW, LazyTreeView))
+#define LAZY_TREE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_LAZY_TREE_VIEW, LazyTreeViewClass))
+#define IS_LAZY_TREE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_LAZY_TREE_VIEW))
+#define IS_LAZY_TREE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_LAZY_TREE_VIEW_CLASS))
+#define LAZY_TREE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_LAZY_TREE_VIEW, LazyTreeViewClass))
 
 typedef struct _LazyTreeView         LazyTreeView;
 typedef struct _LazyTreeViewClass    LazyTreeViewClass;
