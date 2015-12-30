@@ -59,11 +59,15 @@ print_adj(const char *name, GtkAdjustment *adj)
   if (adj == NULL)
     printf("%s, adj is NULL\n", name);
   else
-    printf("%s, value: %lf, lower: %lf, upper: %lf\n",
+    printf("%s, value: %lf, lower: %lf, upper: %lf, page size: %lf, page incr: %lf, step incr %lf\n",
            name,
            gtk_adjustment_get_value (adj),
            gtk_adjustment_get_lower (adj),
-           gtk_adjustment_get_upper (adj));
+           gtk_adjustment_get_upper (adj),
+           gtk_adjustment_get_page_size (adj),
+           gtk_adjustment_get_page_increment (adj),
+           gtk_adjustment_get_step_increment (adj));
+
 }
 /* Callbacks */
 static void
@@ -73,6 +77,24 @@ lazy_tree_view_hadjustment_changed (GtkAdjustment *adjustment,
 
   GtkTreeModel *model;
   guint ncol_in_tree_view, ncol_in_model, col_offset = 0;
+
+  GtkAdjustment *adj;
+  GParamSpec *pspec;
+  GValue val = G_VALUE_INIT;
+
+  g_value_init (&val, GTK_TYPE_ADJUSTMENT);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (tree_view), "hadjustment");
+
+  /* FIXME: 19 is the property id of hadjustment in GtkTreeView - Any ideas how to get it?*/
+  G_OBJECT_CLASS(lazy_tree_view_parent_class)->get_property (G_OBJECT (tree_view),
+                                                             19, /* FIXME: I am DIRTY */
+                                                             &val,
+                                                             pspec);
+  adj = g_value_get_object (&val);
+  g_return_if_fail (adj != NULL);
+  g_return_if_fail (GTK_IS_ADJUSTMENT (adj));
+
+  print_adj("Parent Adjustment", adj);
 
   ncol_in_tree_view = gtk_tree_view_get_n_columns (GTK_TREE_VIEW (tree_view));
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
@@ -320,6 +342,7 @@ lazy_tree_view_move_cursor (GtkTreeView       *tree_view,
       step == GTK_MOVEMENT_VISUAL_POSITIONS &&
       count < 0)
     {
+      gtk_tree_view_column_set_fixed_width (g_list_last (list)->data, -1);
       gtk_tree_view_move_column_after (tree_view,
                                        g_list_last (list)->data, NULL);
       lazy_tree_view->col_offset--;
