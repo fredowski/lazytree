@@ -1,11 +1,11 @@
 # General Information
 
-This is lazytree which is based on GTK+ GtkTreeView for lazy
+This is lazytree which is based on GTK+ GtkTreeView ideas for lazy
 data retrieval. This is useful for a large number of columns and
 rows. It provides an example lazystore which provides the
 GtkTreeModel Interface without actually storing data.
 
-lazytreeview is derived from GtkTreeView and renders the data
+lazytreeview is derived from renders the data
 in a lazy manner. Unlike GtkTreeView LazyTreeView only retrieves
 a subset of the data from the model. This comes with restrictions.
 

@@ -31,5 +31,7 @@ typedef struct _LazyTreeViewClass    LazyTreeViewClass;
 
 GType                   lazy_tree_view_get_type     (void);
 GtkWidget              *lazy_tree_view_new          (void);
+void                    lazy_tree_view_set_model    (LazyTreeView *tree_view,
+                                                     GtkTreeModel *model);
 
 #endif /* __LAZY_TREE_VIEW_H */

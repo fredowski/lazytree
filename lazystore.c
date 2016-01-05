@@ -101,7 +101,7 @@ static void
 lazy_store_init (LazyStore *lazy_store)
 {
   lazy_store->n_columns = 30000;
-  lazy_store->n_rows = 100;
+  lazy_store->n_rows = 1000000;
   lazy_store->stamp = g_random_int ();
 }
 
